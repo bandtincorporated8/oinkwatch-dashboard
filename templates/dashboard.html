@@ -6,6 +6,7 @@
     <title>🐷 OinkWatch Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -15,21 +16,30 @@
             <div class="status-indicator" id="status-indicator">
                 <span class="pulse"></span>
                 <span id="status-text">Connecting...</span>
+                <span class="ws-status" id="ws-status">⚡ Live</span>
             </div>
         </header>
 
         <main class="grid">
-            <!-- System Status Card -->
-            <section class="card status-card">
-                <h2>⚡ System Status</h2>
-                <div class="metric-grid">
+            <!-- System Stats Card -->
+            <section class="card stats-card">
+                <h2>📊 Workspace Stats</h2>
+                <div class="metric-grid four-col">
                     <div class="metric">
-                        <span class="metric-value" id="memory-count">-</span>
+                        <span class="metric-value" id="stat-files">-</span>
+                        <span class="metric-label">Total Files</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value" id="stat-dirs">-</span>
+                        <span class="metric-label">Directories</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value" id="stat-memory">-</span>
                         <span class="metric-label">Memory Files</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-value" id="uptime">-</span>
-                        <span class="metric-label">Workspace</span>
+                        <span class="metric-value" id="stat-size">-</span>
+                        <span class="metric-label">Size (MB)</span>
                     </div>
                 </div>
             </section>
@@ -42,12 +52,21 @@
                 </div>
             </section>
 
+            <!-- Git Activity Card -->
+            <section class="card git-card">
+                <h2>🔀 Git Activity</h2>
+                <div id="git-list" class="git-list">
+                    <div class="loading">Loading...</div>
+                </div>
+            </section>
+
             <!-- Memory Browser Card -->
             <section class="card memory-card full-width">
                 <h2>🧠 Memory Browser</h2>
                 <div class="memory-controls">
                     <input type="text" id="memory-search" placeholder="Search memories...">
                     <button id="refresh-memories">🔄 Refresh</button>
+                    <button id="view-nightproject" class="btn-primary">📋 View Night Project</button>
                 </div>
                 <div id="memory-list" class="memory-list">
                     <div class="loading">Loading memories...</div>
@@ -56,14 +75,28 @@
 
             <!-- Activity Timeline Card -->
             <section class="card activity-card full-width">
-                <h2>📊 Activity Timeline</h2>
+                <h2>📈 Activity Timeline</h2>
                 <canvas id="activity-chart"></canvas>
             </section>
         </main>
 
         <footer>
             <p>Built with 💜 by Oink | OpenClaw Agent Dashboard</p>
+            <p class="update-time" id="update-time">Last updated: Never</p>
         </footer>
+    </div>
+
+    <!-- Memory Content Modal -->
+    <div id="memory-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Memory Content</h3>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <pre id="modal-content"></pre>
+            </div>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>

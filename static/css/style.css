@@ -10,6 +10,7 @@
     --warning: #f59e0b;
     --error: #ef4444;
     --border: #30363d;
+    --git-green: #238636;
 }
 
 * {
@@ -64,6 +65,12 @@ header h1 {
     font-size: 0.9rem;
 }
 
+.ws-status {
+    font-size: 0.75rem;
+    color: var(--success);
+    font-weight: bold;
+}
+
 .pulse {
     width: 10px;
     height: 10px;
@@ -115,6 +122,10 @@ header h1 {
     gap: 1rem;
 }
 
+.metric-grid.four-col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .metric {
     text-align: center;
     padding: 1rem;
@@ -124,7 +135,7 @@ header h1 {
 
 .metric-value {
     display: block;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: var(--accent-primary);
 }
@@ -136,12 +147,12 @@ header h1 {
     margin-top: 0.25rem;
 }
 
-.cron-list, .memory-list {
+.cron-list, .git-list, .memory-list {
     max-height: 300px;
     overflow-y: auto;
 }
 
-.cron-item, .memory-item {
+.cron-item, .memory-item, .git-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -149,19 +160,36 @@ header h1 {
     background: var(--bg-tertiary);
     border-radius: 6px;
     margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .cron-item:hover, .memory-item:hover {
     background: var(--border);
 }
 
-.cron-name, .memory-name {
-    font-weight: 500;
+.git-item {
+    cursor: default;
 }
 
-.cron-schedule, .memory-meta {
+.cron-name, .memory-name, .git-message {
+    font-weight: 500;
+    flex: 1;
+}
+
+.cron-schedule, .memory-meta, .git-time {
     font-size: 0.8rem;
     color: var(--text-secondary);
+}
+
+.git-hash {
+    font-family: monospace;
+    font-size: 0.75rem;
+    background: var(--git-green);
+    color: white;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
 }
 
 .cron-status {
@@ -175,6 +203,11 @@ header h1 {
 .cron-status.active {
     background: rgba(34, 197, 94, 0.2);
     color: var(--success);
+}
+
+.cron-status.paused {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
 }
 
 .memory-controls {
@@ -200,17 +233,28 @@ header h1 {
 
 .memory-controls button {
     padding: 0.75rem 1rem;
-    background: var(--accent-primary);
-    border: none;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
     border-radius: 6px;
-    color: white;
+    color: var(--text-primary);
     cursor: pointer;
     font-size: 0.9rem;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
 .memory-controls button:hover {
+    background: var(--border);
+}
+
+.memory-controls button.btn-primary {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.memory-controls button.btn-primary:hover {
     background: var(--accent-secondary);
+    border-color: var(--accent-secondary);
 }
 
 .loading {
@@ -219,12 +263,101 @@ header h1 {
     padding: 2rem;
 }
 
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.2s;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.modal-body pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Fira Code', 'Monaco', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
 footer {
     text-align: center;
     margin-top: 2rem;
     padding: 1rem;
     color: var(--text-secondary);
     font-size: 0.9rem;
+}
+
+.update-time {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    opacity: 0.7;
 }
 
 /* Scrollbar styling */
@@ -245,4 +378,19 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .metric-grid.four-col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
 }
