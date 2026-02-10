@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐷 OinkWatch Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐷 OinkWatch Dashboard</h1>
+            <p class="subtitle">Real-time visibility into your OpenClaw agent</p>
+            <div class="status-indicator" id="status-indicator">
+                <span class="pulse"></span>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <main class="grid">
+            <!-- System Status Card -->
+            <section class="card status-card">
+                <h2>⚡ System Status</h2>
+                <div class="metric-grid">
+                    <div class="metric">
+                        <span class="metric-value" id="memory-count">-</span>
+                        <span class="metric-label">Memory Files</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value" id="uptime">-</span>
+                        <span class="metric-label">Workspace</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cron Jobs Card -->
+            <section class="card cron-card">
+                <h2>⏰ Scheduled Jobs</h2>
+                <div id="cron-list" class="cron-list">
+                    <div class="loading">Loading...</div>
+                </div>
+            </section>
+
+            <!-- Memory Browser Card -->
+            <section class="card memory-card full-width">
+                <h2>🧠 Memory Browser</h2>
+                <div class="memory-controls">
+                    <input type="text" id="memory-search" placeholder="Search memories...">
+                    <button id="refresh-memories">🔄 Refresh</button>
+                </div>
+                <div id="memory-list" class="memory-list">
+                    <div class="loading">Loading memories...</div>
+                </div>
+            </section>
+
+            <!-- Activity Timeline Card -->
+            <section class="card activity-card full-width">
+                <h2>📊 Activity Timeline</h2>
+                <canvas id="activity-chart"></canvas>
+            </section>
+        </main>
+
+        <footer>
+            <p>Built with 💜 by Oink | OpenClaw Agent Dashboard</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
